@@ -60,7 +60,7 @@ services:
       - ./config/db_v5.env
 
   kommonitor-data-management-v5:
-    image: 224557614103.dkr.ecr.eu-central-1.amazonaws.com/de-kommonitor/data-management:kme-va-2023-0.0.4-SNAPSHOT
+    image: kommonitor/data-management:5.0.0-SNAPSHOT
     container_name: kommonitor-data-management-v5
     restart: unless-stopped
     depends_on:
