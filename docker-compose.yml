@@ -1,0 +1,112 @@
+version: '3.8'
+
+networks:
+  kommonitor:
+    name: kommonitor
+    driver: bridge
+
+services:
+  kommonitor-db-v4:
+    image: postgis/postgis:15-master
+    container_name: kommonitor-db-v4
+    restart: unless-stopped
+    networks:
+      - kommonitor
+    ports:
+      - 5432:5432
+    volumes:
+      - ./storage/database_v4/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d kommonitor_data_v4 -U kommonitor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - ./config/db_v4.env
+
+  kommonitor-data-management-v4:
+    image: kommonitor/data-management:4.0.1
+    container_name: kommonitor-data-management-v4
+    restart: unless-stopped
+    depends_on:
+      kommonitor-db-v4:
+        condition: service_healthy
+    ports:
+      - "8084:8085"
+    networks:
+      - kommonitor
+    links:
+      - kommonitor-db-v4
+    env_file:
+      - ./config/data-management_v4.env
+      - ./config/keycloak.env
+
+  kommonitor-db-v5:
+    image: postgis/postgis:15-master
+    container_name: kommonitor-db-v5
+    restart: unless-stopped
+    networks:
+      - kommonitor
+    ports:
+      - 5433:5432
+    volumes:
+      - ./storage/database_v5/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d kommonitor_data_v5 -U kommonitor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - ./config/db_v5.env
+
+  kommonitor-data-management-v5:
+    image: 224557614103.dkr.ecr.eu-central-1.amazonaws.com/de-kommonitor/data-management:kme-va-2023-0.0.4-SNAPSHOT
+    container_name: kommonitor-data-management-v5
+    restart: unless-stopped
+    depends_on:
+      kommonitor-db-v5:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    networks:
+      - kommonitor
+    links:
+      - kommonitor-db-v5
+    env_file:
+      - ./config/data-management_v5.env
+      - ./config/keycloak.env
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5
+    container_name: keycloak
+    restart: unless-stopped
+    volumes:
+      - ./realms/realm-export-kommonitor.json:/opt/keycloak/data/import/realm.json
+    command:
+      - start-dev
+      - --import-realm
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    networks:
+      - kommonitor
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=dev-file
+
+    # optional pgadmin container to inspect the database
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    ports:
+      - 8083:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@kommonitor.de
+      - PGADMIN_DEFAULT_PASSWORD=kommonitor
+    volumes:
+      - ./storage/pgadmin:/var/lib/pgadmin
+    networks:
+      - kommonitor
