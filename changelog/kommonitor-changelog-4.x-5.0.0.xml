@@ -1,50 +1,70 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="kommonitor" id="1730806721971-38">
-        <dropForeignKeyConstraint baseTableName="metadataspatialunits_roles" constraintName="fk2p74dltotccvkgp060hkko806"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-39">
-        <dropForeignKeyConstraint baseTableName="metadataspatialunits_roles" constraintName="fk35r16yl8jbc9okkvjlvcdmwlu"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-40">
-        <dropForeignKeyConstraint baseTableName="indicatorspatialunits_roles" constraintName="fk56nrv24ulpkui7cgq16injh3f"/>
-    </changeSet>
     <changeSet author="kommonitor" id="1730806721971-41">
         <dropForeignKeyConstraint baseTableName="metadataindicators_defaultclassification" constraintName="fkaht0q849jrsr22wqslthqnvfu"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-42">
-        <dropForeignKeyConstraint baseTableName="metadataindicators_regionalreferencevalues" constraintName="fkdot0sxkbo9b643qps9bjkbp36"/>
+    <changeSet  author="kommonitor"  id="1730806721971-38">
+        <dropAllForeignKeyConstraints
+            baseTableName="metadataspatialunits_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-43">
-        <dropForeignKeyConstraint baseTableName="metadataindicators_roles" constraintName="fkgje1nuo48ro280l90c7f8exq6"/>
+    <changeSet  author="kommonitor"  id="1730806721971-39">
+        <dropAllForeignKeyConstraints
+            baseTableName="indicatorspatialunits_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-44">
-        <dropForeignKeyConstraint baseTableName="metadatageoresources_roles" constraintName="fkh4ujc86l18s6k4vb80prcfhjn"/>
+    <changeSet  author="kommonitor"  id="1730806721971-44">
+        <dropAllForeignKeyConstraints
+            baseTableName="indicatorspatialunits_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-45">
-        <dropForeignKeyConstraint baseTableName="metadatageoresources_roles" constraintName="fki4gx7w5ptscs44jsmlxyh4pdf"/>
+    <changeSet  author="kommonitor"  id="1730806721971-45">
+        <dropAllForeignKeyConstraints
+            baseTableName="indicatorspatialunits_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-46">
-        <dropForeignKeyConstraint baseTableName="metadataindicators_regionalreferencevalues" constraintName="fklt1s456rj49ceb4ugy4wt48nh"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-47">
-        <dropForeignKeyConstraint baseTableName="roles" constraintName="fknr7bgblili62h2op3ucp8ac9r"/>
-    </changeSet>
+
     <changeSet author="kommonitor" id="1730806721971-48">
         <dropForeignKeyConstraint baseTableName="metadataindicators_defaultclassification" constraintName="fkq0us248wnb2j151csjtrkfa8n"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730806721971-1">
-        <createTable tableName="permissions">
-            <column name="permissionid" type="VARCHAR(255)">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="permissions_pkey"/>
-            </column>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="permissionlevel" type="SMALLINT"/>
-            <column name="permissiontype" type="VARCHAR(255)"/>
-            <column name="organizationalunit" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+    <changeSet author="kommonitor" id="1730806721971-100">
+        <renameTable 
+            oldTableName="roles"
+            newTableName="permissions"/>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="renameColumn-example">
+        <renameColumn
+            tableName="permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="roleid"
+            newColumnName="permissionid"
+            schemaName="public" />
+    </changeSet>
+    <changeSet  author="kommonitor"  id="renameColumn-example">
+        <renameColumn
+            tableName="permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="rolename"
+            newColumnName="name"
+            schemaName="public" />
+    </changeSet>
+    <changeSet author="kommonitor" id="addColumn-example">
+        <addColumn
+            schemaName= "public"
+            tableName="permissions">
+            <column name="permissiontype"
+                type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="1730806721971-101">
+        <renameTable 
+            oldTableName="metadatageoresources_roles"
+            newTableName="metadatageoresources_permissions"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="1730806721971-102">
+        <renameTable 
+            oldTableName="metadatageoresources_roles"
+            newTableName="metadatageoresources_permissions"/>
     </changeSet>
     <changeSet author="kommonitor" id="1730806721971-2">
         <createTable tableName="metadataindicators_defaultclassificationmapping">
