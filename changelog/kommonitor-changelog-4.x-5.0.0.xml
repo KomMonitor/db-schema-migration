@@ -1,192 +1,386 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="kommonitor" id="1730883862164-32">
-        <dropForeignKeyConstraint baseTableName="metadataspatialunits_roles" constraintName="fk2p74dltotccvkgp060hkko806"/>
+    <!--Drop foreign keys on roles table, which will be renamed-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-1">
+        <dropAllForeignKeyConstraints
+            baseTableName="metadataspatialunits_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-33">
-        <dropForeignKeyConstraint baseTableName="metadataspatialunits_roles" constraintName="fk35r16yl8jbc9okkvjlvcdmwlu"/>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-2">
+        <dropAllForeignKeyConstraints
+            baseTableName="indicatorspatialunits_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-34">
-        <dropForeignKeyConstraint baseTableName="indicatorspatialunits_roles" constraintName="fk56nrv24ulpkui7cgq16injh3f"/>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-3">
+        <dropAllForeignKeyConstraints
+            baseTableName="metadataindicators_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-35">
-        <dropForeignKeyConstraint baseTableName="metadataindicators_roles" constraintName="fkgje1nuo48ro280l90c7f8exq6"/>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-4">
+        <dropAllForeignKeyConstraints
+            baseTableName="metadatageoresources_roles"
+            baseTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-36">
-        <dropForeignKeyConstraint baseTableName="metadatageoresources_roles" constraintName="fkh4ujc86l18s6k4vb80prcfhjn"/>
+
+    <!--Rename roles -> permissions and add columns-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-5">
+        <dropPrimaryKey constraintName="roles_pkey"
+            dropIndex="false"
+            schemaName="public"
+            tableName="roles"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-37">
-        <dropForeignKeyConstraint baseTableName="metadatageoresources_roles" constraintName="fki4gx7w5ptscs44jsmlxyh4pdf"/>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-6">
+        <renameTable 
+            oldTableName="roles"
+            newTableName="permissions"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-38">
-        <dropForeignKeyConstraint baseTableName="roles" constraintName="fknr7bgblili62h2op3ucp8ac9r"/>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-7">
+        <renameColumn
+            tableName="permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="roleid"
+            newColumnName="permissionid"
+            schemaName="public" />
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-1">
-        <createTable tableName="permissions">
-            <column name="permissionid" type="VARCHAR(255)">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="permissions_pkey"/>
-            </column>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="permissionlevel" type="SMALLINT"/>
-            <column name="permissiontype" type="VARCHAR(255)"/>
-            <column name="organizationalunit" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-8">
+        <renameColumn
+            tableName="permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="rolename"
+            newColumnName="name"
+            schemaName="public" />
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-2">
-        <addUniqueConstraint columnNames="keycloakid" constraintName="uk_hjlrkqdvjt7amjru2elp9uyq0" tableName="organizationalunits"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-3">
-        <createTable tableName="metadatageoresources_permissions">
-            <column name="metadatageoresources_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="permission_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-4">
-        <createTable tableName="metadataspatialunits_permissions">
-            <column name="metadataspatialunits_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="permission_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-5">
-        <addColumn tableName="indicatorspatialunits_roles">
-            <column name="permission_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-9">
+        <addColumn
+            schemaName= "public"
+            tableName="permissions">
+            <column name="permissiontype"
+                type="varchar(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-6">
-        <addColumn tableName="metadataindicators_roles">
-            <column name="permission_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-10">
+        <addPrimaryKey  
+            columnNames="permissionid"
+            constraintName="permissions_pkey"
+            schemaName="public"
+            tableName="permissions"/>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-7">
+    <!--TODO: Check if chaning check constraint name from 'roles_permissionlevel_check' to 'permissions_permissionlevel_check' is needed.-->
+
+    <!--Add columns to OrganizationaUnits and set foreign keys-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-11">
         <addColumn tableName="organizationalunits">
             <column name="ismandant" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-8">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-12">
         <addColumn tableName="organizationalunits">
             <column name="keycloakid" type="UUID">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-9">
-        <addColumn tableName="indicatorspatialunits">
-            <column name="ispublic" type="BOOLEAN"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-10">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-13">
         <addColumn tableName="organizationalunits">
             <column name="mandant" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-11">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-14">
         <addColumn tableName="organizationalunits">
             <column name="parent" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-12">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-15">
+        <addUniqueConstraint
+            columnNames="keycloakid"
+            constraintName="uk_organizationalunits_keycloakid"
+            tableName="organizationalunits"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-16">
+        <addForeignKeyConstraint 
+            baseColumnNames="parent"
+            baseTableName="organizationalunits"
+            constraintName="fk_parnet_organizationalunit"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="organizationalunitid"
+            referencedTableName="organizationalunits"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-17">
+        <addForeignKeyConstraint 
+            baseColumnNames="mandant"
+            baseTableName="organizationalunits"
+            constraintName="fk_mandant_organizationalunit"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="organizationalunitid"
+            referencedTableName="organizationalunits"
+            validate="true"/>
+    </changeSet>
+
+    <!--Rename permission join tables-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-18">
+        <renameTable 
+            oldTableName="metadatageoresources_roles"
+            newTableName="metadatageoresources_permissions"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-19">
+        <renameTable 
+            oldTableName="metadataspatialunits_roles"
+            newTableName="metadataspatialunits_permissions"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-20">
+        <renameTable 
+            oldTableName="metadataindicators_roles"
+            newTableName="metadataindicators_permissions"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-21">
+        <renameTable 
+            oldTableName="indicatorspatialunits_roles"
+            newTableName="indicatorspatialunits_permissions"/>
+    </changeSet>
+
+    <!--Rename roles_id -> permission_id column in permission join tables-->
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-22">
+        <renameColumn
+            tableName="metadatageoresources_permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="roles_id"
+            newColumnName="permission_id"
+            schemaName="public" />
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-23">
+        <renameColumn
+            tableName="metadataspatialunits_permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="roles_id"
+            newColumnName="permission_id"
+            schemaName="public" />
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-24">
+        <renameColumn
+            tableName="metadataindicators_permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="roles_id"
+            newColumnName="permission_id"
+            schemaName="public" />
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-25">
+        <renameColumn
+            tableName="indicatorspatialunits_permissions"
+            columnDataType="VARCHAR(255)"
+            oldColumnName="roles_id"
+            newColumnName="permission_id"
+            schemaName="public" />
+    </changeSet>
+
+    <!--Set foreign key in permission join tables on permissions table-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-26">
+        <addForeignKeyConstraint 
+            baseColumnNames="permission_id" 
+            baseTableName="indicatorspatialunits_permissions"
+            constraintName="fk_indicatorspatialunits_permissions_permission"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="permissionid"
+            referencedTableName="permissions"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-27">
+        <addForeignKeyConstraint
+            baseColumnNames="permission_id"
+            baseTableName="metadataspatialunits_permissions"
+            constraintName="fk_metadataspatialunits_permissions_permission"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="permissionid"
+            referencedTableName="permissions"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-28">
+        <addForeignKeyConstraint
+            baseColumnNames="permission_id"
+            baseTableName="metadatageoresources_permissions"
+            constraintName="fk_metadatageoresources_permissions_permission"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="permissionid"
+            referencedTableName="permissions"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-29">
+        <addForeignKeyConstraint
+            baseColumnNames="permission_id"
+            baseTableName="metadataindicators_permissions"
+            constraintName="fk_metadataindicators_permissions_permission"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="permissionid"
+            referencedTableName="permissions"
+            validate="true"/>
+    </changeSet>
+
+    <!--Set foreign key in permission join tables on dataset tables-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-30">
+        <addForeignKeyConstraint
+            baseColumnNames="metadataspatialunits_id"
+            baseTableName="metadataspatialunits_permissions"
+            constraintName="fk_metadataspatialunits_permissions_metadataspatialunit"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="datasetid"
+            referencedTableName="metadataspatialunits"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-31">
+        <addForeignKeyConstraint 
+            baseColumnNames="metadatageoresources_id"
+            baseTableName="metadatageoresources_permissions"
+            constraintName="fk_metadatageoresources_permissions_metadatageoresource"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="datasetid"
+            referencedTableName="metadatageoresources"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-32">
+        <addForeignKeyConstraint
+            baseColumnNames="metadataindicators_id"
+            baseTableName="metadataindicators_permissions"
+            constraintName="fk_metadataindicators_permissions_indicator"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="datasetid"
+            referencedTableName="metadataindicators"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-33">
+        <addForeignKeyConstraint 
+            baseColumnNames="indicatorspatialunit_id"
+            baseTableName="indicatorspatialunits_permissions"
+            constraintName="fk_indicatorspatialunits_permissions_indicatorspatialunit"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="entryid"
+            referencedTableName="indicatorspatialunits"
+            validate="true"/>
+    </changeSet>
+
+    <!--Add isPublic and owner columns to dataset tables and
+    set forein key for owner on organizationalunit table-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-34">
+        <addColumn tableName="indicatorspatialunits">
+            <column name="ispublic" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-34">
         <addColumn tableName="indicatorspatialunits">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-13">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-36">
+        <addForeignKeyConstraint 
+            baseColumnNames="owner_organizationalunitid"
+            baseTableName="indicatorspatialunits"
+            constraintName="fk_owner_indicatorspatialunit"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="organizationalunitid"
+            referencedTableName="organizationalunits"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-37">
         <addColumn tableName="metadataspatialunits">
             <column name="ispublic" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-14">
-        <addColumn tableName="metadatageoresources">
-            <column name="ispublic" type="BOOLEAN"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-15">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-38">
         <addColumn tableName="metadataspatialunits">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-16">
-        <addColumn tableName="metadataindicators">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-39">
+        <addForeignKeyConstraint
+            baseColumnNames="owner_organizationalunitid"
+            baseTableName="metadataspatialunits"
+            constraintName="fk_owner_metadataspatialunit"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="organizationalunitid"
+            referencedTableName="organizationalunits"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-40">
+        <addColumn tableName="metadatageoresources">
             <column name="ispublic" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-17">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-41">
         <addColumn tableName="metadatageoresources">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-18">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-42">
+        <addForeignKeyConstraint 
+            baseColumnNames="owner_organizationalunitid"
+            baseTableName="metadatageoresources"
+            constraintName="fk_owner_metadatageoresources"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="organizationalunitid"
+            referencedTableName="organizationalunits"
+            validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-43">
+        <addColumn tableName="metadataindicators">
+            <column name="ispublic" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-44">
         <addColumn tableName="metadataindicators">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-19">
-        <addForeignKeyConstraint baseColumnNames="parent" baseTableName="organizationalunits" constraintName="fk3bm4ecg8sr4fyce8gpgcoifc2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-20">
-        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="metadataspatialunits" constraintName="fk3j5hwqpw067o40i0pc5n7y81w" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-21">
-        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="indicatorspatialunits" constraintName="fk5qiyu7wg29c5u5gne280ha0h5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-22">
-        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="indicatorspatialunits_roles" constraintName="fk6mfgybae58am87occ1pvxqb35" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-23">
-        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="metadataspatialunits_permissions" constraintName="fk7ls7o1jla5e9dldak6yrrqxdq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-24">
-        <addForeignKeyConstraint baseColumnNames="mandant" baseTableName="organizationalunits" constraintName="fk7mscc9wm82n23nmirr394h0ne" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-25">
-        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="metadatageoresources_permissions" constraintName="fk87qg1sgxo3pcmo3189tlas2cu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-26">
-        <addForeignKeyConstraint baseColumnNames="metadataspatialunits_id" baseTableName="metadataspatialunits_permissions" constraintName="fk9d89b761lh3m7dn612cw06888" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataspatialunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-27">
-        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="metadataindicators" constraintName="fkf7wi42jyhwx6yvdxgjwr84dam" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-28">
-        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="metadatageoresources" constraintName="fkhgfrv0npwlxkfadhhanw1e0dh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-29">
-        <addForeignKeyConstraint baseColumnNames="metadatageoresources_id" baseTableName="metadatageoresources_permissions" constraintName="fkis8vhkd37va7ltxydm5y5weyi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadatageoresources" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-30">
-        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="metadataindicators_roles" constraintName="fkk4bshdttlovc1h5p2djnf90hg" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-31">
-        <addForeignKeyConstraint baseColumnNames="organizationalunit" baseTableName="permissions" constraintName="fkrf83pb1ulbpvgjq14ndhy15nx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-39">
-        <dropTable tableName="metadatageoresources_roles"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-40">
-        <dropTable tableName="metadataspatialunits_roles"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-41">
-        <dropTable tableName="roles"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-42">
-        <dropColumn columnName="roles_id" tableName="indicatorspatialunits_roles"/>
-    </changeSet>
-    <changeSet author="kommonitor" id="1730883862164-43">
-        <dropColumn columnName="roles_id" tableName="metadataindicators_roles"/>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-45">
+        <addForeignKeyConstraint
+            baseColumnNames="owner_organizationalunitid"
+            baseTableName="metadataindicators"
+            constraintName="fk_owner_metadataindicators"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="organizationalunitid"
+            referencedTableName="organizationalunits"
+            validate="true"/>
     </changeSet>
 </databaseChangeLog>
