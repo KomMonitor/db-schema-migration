@@ -65,20 +65,27 @@
             schemaName="public"
             tableName="permissions"/>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-300">
+        <loadUpdateData primaryKey="permissionid" commentLineStartsWith="#" encoding="UTF-8" file="data_input/permissions.csv" quotchar="&quot;" separator="," tableName="permissions">
+            <column header="permissionid" name="permissionid" type="STRING"/>
+            <column header="permissionlevel" name="permissionlevel" type="NUMERIC"/>
+            <column header="name" name="name" type="skip"/>
+            <column header="organizationalunit" name="organizationalunit" type="STRING"/>
+            <column header="permissiontype" name="permissiontype" type="STRING"/>
+        </loadUpdateData>
+    </changeSet>
     <!--TODO: Check if chaning check constraint name from 'roles_permissionlevel_check' to 'permissions_permissionlevel_check' is needed.-->
 
     <!--Add columns to OrganizationaUnits and set foreign keys-->
     <changeSet author="kommonitor" id="kommonitor-5.0.0-11">
         <addColumn tableName="organizationalunits">
             <column name="ismandant" type="BOOLEAN">
-                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.0.0-12">
         <addColumn tableName="organizationalunits">
             <column name="keycloakid" type="UUID">
-                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
@@ -92,10 +99,23 @@
             <column name="parent" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.0.0-15">
-        <addUniqueConstraint
-            columnNames="keycloakid"
-            constraintName="uk_organizationalunits_keycloakid"
+
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-301">
+        <loadUpdateData primaryKey="organizationalunitid" commentLineStartsWith="#" encoding="UTF-8" file="data_input/organizationalunits.csv" quotchar="&quot;" separator="," tableName="organizationalunits">
+            <column header="organizationalunitid" name="organizationalunitid" type="STRING"/>
+            <column header="contact" name="contact" type="STRING"/>
+            <column header="description" name="description" type="STRING"/>
+            <column header="name" name="name" type="STRING"/>
+            <column header="ismandant" name="ismandant" type="BOOLEAN"/>
+            <column header="mandant" name="mandant" type="VARCHAR(255)"/>
+            <column header="parent" name="parent" type="VARCHAR(255)"/>
+        </loadUpdateData>
+    </changeSet>
+
+    <changeSet author="kommonitor"  id="kommonitor-5.0.0-202">
+        <addNotNullConstraint
+            columnName="ismandant"
+            schemaName="public"
             tableName="organizationalunits"/>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.0.0-16">
@@ -289,6 +309,33 @@
             validate="true"/>
     </changeSet>
 
+    <!--Delete joined permissions to adapt permission levels from 3 to 2-->
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-400">
+        <sql dbms="postgresql">
+            DELETE FROM metadataspatialunits_permissions USING permissions WHERE metadataspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-401">
+        <sql dbms="postgresql">
+            DELETE FROM metadatageoresources_permissions USING permissions WHERE metadatageoresources_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-402">
+        <sql dbms="postgresql">
+            DELETE FROM metadataindicators_permissions USING permissions WHERE metadataindicators_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-403">
+        <sql dbms="postgresql">
+            DELETE FROM indicatorspatialunits_permissions USING permissions WHERE indicatorspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-5.0.0-404">
+        <sql dbms="postgresql">
+            UPDATE permissions SET permissionlevel = '2' WHERE permissionlevel = '3';
+        </sql>
+    </changeSet>
+
     <!--Add isPublic and owner columns to dataset tables and
     set forein key for owner on organizationalunit table-->
     <changeSet author="kommonitor" id="kommonitor-5.0.0-34">
@@ -296,10 +343,25 @@
             <column name="ispublic" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.0.0-34">
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-35">
         <addColumn tableName="indicatorspatialunits">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-302">
+        <loadUpdateData primaryKey="entryid" commentLineStartsWith="#" encoding="UTF-8" file="data_input/indicatorspatialunits.csv" quotchar="&quot;" separator="," tableName="indicatorspatialunits">
+            <column header="entryid" name="entryid" type="STRING"/>
+            <column header="defaultstylename" name="defaultstylename" type="STRING"/>
+            <column header="indicatormetadataid" name="indicatormetadataid" type="STRING"/>
+            <column header="indicatorname" name="indicatorname" type="STRING"/>
+            <column header="indicatorvaluetablename" name="indicatorvaluetablename" type="STRING"/>
+            <column header="spatialunitid" name="spatialunitid" type="STRING"/>
+            <column header="spatialunitname" name="spatialunitname" type="STRING"/>
+            <column header="wfsurl" name="wfsurl" type="STRING"/>
+            <column header="wmsurl" name="wmsurl" type="STRING"/>
+            <column header="ispublic" name="ispublic" type="BOOLEAN"/>
+            <column header="owner" name="owner_organizationalunitid" type="VARCHAR(255)"/>
+        </loadUpdateData>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.0.0-36">
         <addForeignKeyConstraint 
@@ -314,6 +376,7 @@
             referencedTableName="organizationalunits"
             validate="true"/>
     </changeSet>
+
     <changeSet author="kommonitor" id="kommonitor-5.0.0-37">
         <addColumn tableName="metadataspatialunits">
             <column name="ispublic" type="BOOLEAN"/>
@@ -323,6 +386,33 @@
         <addColumn tableName="metadataspatialunits">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-303">
+        <loadUpdateData primaryKey="datasetid" commentLineStartsWith="#" encoding="UTF-8" file="data_input/metadataspatialunits.csv" quotchar="&quot;" separator="," tableName="metadataspatialunits">
+            <column header="datasetid" name="datasetid" type="STRING"/>
+            <column header="contact" name="contact" type="STRING"/>
+            <column header="databasis" name="databasis" type="STRING"/>
+            <column header="datasource" name="datasource" type="STRING"/>
+            <column header="datasetname" name="datasetname" type="STRING"/>
+            <column header="dbtablename" name="dbtablename" type="STRING"/>
+            <column header="description" name="description" type="STRING"/>
+            <column header="jsonschema" name="jsonschema" type="skip"/>
+            <column header="lastupdate" name="lastupdate" type="DATE"/>
+            <column header="literature" name="literature" type="STRING"/>
+            <column header="note" name="note" type="STRING"/>
+            <column header="updateintervall" name="updateintervall" type="STRING"/>
+            <column header="wfsurl" name="wfsurl" type="STRING"/>
+            <column header="wmsurl" name="wmsurl" type="STRING"/>
+            <column header="nextlowerhierarchylevel" name="nextlowerhierarchylevel" type="STRING"/>
+            <column header="nextupperhierarchylevel" name="nextupperhierarchylevel" type="STRING"/>
+            <column header="sridepsg" name="sridepsg" type="NUMERIC"/>
+            <column header="outlinecolor" name="outlinecolor" type="STRING"/>
+            <column header="outlinedasharraystring" name="outlinedasharraystring" type="STRING"/>
+            <column header="outlinewidth" name="outlinewidth" type="NUMERIC"/>
+            <column header="isoutlinelayer" name="isoutlinelayer" type="BOOLEAN"/>
+            <column header="ispublic" name="ispublic" type="BOOLEAN"/>
+            <column header="owner" name="owner_organizationalunitid" type="VARCHAR(255)"/>
+        </loadUpdateData>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.0.0-39">
         <addForeignKeyConstraint
@@ -337,6 +427,7 @@
             referencedTableName="organizationalunits"
             validate="true"/>
     </changeSet>
+
     <changeSet author="kommonitor" id="kommonitor-5.0.0-40">
         <addColumn tableName="metadatageoresources">
             <column name="ispublic" type="BOOLEAN"/>
@@ -346,6 +437,40 @@
         <addColumn tableName="metadatageoresources">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-304">
+        <loadUpdateData primaryKey="datasetid" commentLineStartsWith="#" encoding="UTF-8" file="data_input/metadatageoresources.csv" quotchar="&quot;" separator="," tableName="metadatageoresources">
+            <column header="datasetid" name="datasetid" type="STRING"/>
+            <column header="contact" name="contact" type="STRING"/>
+            <column header="databasis" name="databasis" type="STRING"/>
+            <column header="datasource" name="datasource" type="STRING"/>
+            <column header="datasetname" name="datasetname" type="STRING"/>
+            <column header="dbtablename" name="dbtablename" type="STRING"/>
+            <column header="description" name="description" type="STRING"/>
+            <column header="jsonschema" name="jsonschema" type="STRING"/>
+            <column header="lastupdate" name="lastupdate" type="DATE"/>
+            <column header="literature" name="literature" type="STRING"/>
+            <column header="note" name="note" type="STRING"/>
+            <column header="updateintervall" name="updateintervall" type="STRING"/>
+            <column header="wfsurl" name="wfsurl" type="STRING"/>
+            <column header="wmsurl" name="wmsurl" type="STRING"/>
+            <column header="aoicolor" name="aoicolor" type="STRING"/>
+            <column header="isaoi" name="isaoi" type="BOOLEAN"/>
+            <column header="isloi" name="isloi" type="BOOLEAN"/>
+            <column header="ispoi" name="ispoi" type="BOOLEAN"/>
+            <column header="loicolor" name="loicolor" type="STRING"/>
+            <column header="loidasharraystring" name="loidasharraystring" type="STRING"/>
+            <column header="loiwidth" name="loiwidth" type="NUMERIC"/>
+            <column header="poimarkercolor" name="poimarkercolor" type="NUMERIC"/>
+            <column header="poisymbolbootstrap3name" name="poisymbolbootstrap3name" type="STRING"/>
+            <column header="poisymbolcolor" name="poisymbolcolor" type="NUMERIC"/>
+            <column header="sridepsg" name="sridepsg" type="NUMERIC"/>
+            <column header="topicreference" name="topicreference" type="STRING"/>
+            <column header="poimarkerstyle" name="poimarkerstyle" type="NUMERIC"/>
+            <column header="poimarkertext" name="poimarkertext" type="skip"/>
+            <column header="ispublic" name="ispublic" type="BOOLEAN"/>
+            <column header="owner" name="owner_organizationalunitid" type="VARCHAR(255)"/>
+        </loadUpdateData>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.0.0-42">
         <addForeignKeyConstraint 
@@ -360,6 +485,7 @@
             referencedTableName="organizationalunits"
             validate="true"/>
     </changeSet>
+    
     <changeSet author="kommonitor" id="kommonitor-5.0.0-43">
         <addColumn tableName="metadataindicators">
             <column name="ispublic" type="BOOLEAN"/>
@@ -369,6 +495,41 @@
         <addColumn tableName="metadataindicators">
             <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
         </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-305">
+        <loadUpdateData primaryKey="datasetid" commentLineStartsWith="#" encoding="UTF-8" file="data_input/metadataindicators.csv" quotchar="&quot;" separator="," tableName="metadataindicators">
+            <column header="datasetid" name="datasetid" type="STRING"/>
+            <column header="contact" name="contact" type="STRING"/>
+            <column header="databasis" name="databasis" type="STRING"/>
+            <column header="datasource" name="datasource" type="STRING"/>
+            <column header="datasetname" name="datasetname" type="STRING"/>
+            <column header="dbtablename" name="dbtablename" type="skip"/>
+            <column header="description" name="description" type="STRING"/>
+            <column header="jsonschema" name="jsonschema" type="skip"/>
+            <column header="lastupdate" name="lastupdate" type="DATE"/>
+            <column header="literature" name="literature" type="skip"/>
+            <column header="note" name="note" type="STRING"/>
+            <column header="updateintervall" name="updateintervall" type="STRING"/>
+            <column header="wfsurl" name="wfsurl" type="skip"/>
+            <column header="wmsurl" name="wmsurl" type="skip"/>
+            <column header="abbreviation" name="abbreviation" type="STRING"/>
+            <column header="characteristicvalue" name="characteristicvalue" type="skip"/>
+            <column header="colorbrewerschemename" name="colorbrewerschemename" type="STRING"/>
+            <column header="creationtype" name="creationtype" type="NUMERIC"/>
+            <column header="displayorder" name="displayorder" type="NUMERIC"/>
+            <column header="indicatortype" name="indicatortype" type="NUMERIC"/>
+            <column header="interpretation" name="interpretation" type="STRING"/>
+            <column header="isheadlineindicator" name="isheadlineindicator" type="BOOLEAN"/>
+            <column header="lowestspatialunitforcomputation" name="lowestspatialunitforcomputation" type="STRING"/>
+            <column header="processdescription" name="processdescription" type="STRING"/>
+            <column header="referencedatenote" name="referencedatenote" type="STRING"/>
+            <column header="topicreference" name="topicreference" type="STRING"/>
+            <column header="unit" name="unit" type="STRING"/>
+            <column header="classificationmethod" name="classificationmethod" type="NUMERIC"/>
+            <column header="numclasses" name="numclasses" type="NUMERIC"/>
+            <column header="ispublic" name="ispublic" type="BOOLEAN"/>
+            <column header="owner" name="owner_organizationalunitid" type="VARCHAR(255)"/>
+        </loadUpdateData>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.0.0-45">
         <addForeignKeyConstraint
