@@ -312,25 +312,55 @@
     <!--Delete joined permissions to adapt permission levels from 3 to 2-->
     <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-400">
         <sql dbms="postgresql">
-            DELETE FROM metadataspatialunits_permissions USING permissions WHERE metadataspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+            DELETE FROM metadataspatialunits_permissions USING permissions WHERE metadataspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 1;
         </sql>
     </changeSet>
     <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-401">
         <sql dbms="postgresql">
-            DELETE FROM metadatageoresources_permissions USING permissions WHERE metadatageoresources_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+            DELETE FROM metadatageoresources_permissions USING permissions WHERE metadatageoresources_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 1;
         </sql>
     </changeSet>
     <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-402">
         <sql dbms="postgresql">
-            DELETE FROM metadataindicators_permissions USING permissions WHERE metadataindicators_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+            DELETE FROM metadataindicators_permissions USING permissions WHERE metadataindicators_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 1;
         </sql>
     </changeSet>
     <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-403">
         <sql dbms="postgresql">
-            DELETE FROM indicatorspatialunits_permissions USING permissions WHERE indicatorspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 2;
+            DELETE FROM indicatorspatialunits_permissions USING permissions WHERE indicatorspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 1;
         </sql>
     </changeSet>
-    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-404">
+        <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-404">
+        <sql dbms="postgresql">
+            DELETE FROM metadataspatialunits_permissions USING permissions WHERE metadataspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 0;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-405">
+        <sql dbms="postgresql">
+            DELETE FROM metadatageoresources_permissions USING permissions WHERE metadatageoresources_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 0;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-406">
+        <sql dbms="postgresql">
+            DELETE FROM metadataindicators_permissions USING permissions WHERE metadataindicators_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 0;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-407">
+        <sql dbms="postgresql">
+            DELETE FROM indicatorspatialunits_permissions USING permissions WHERE indicatorspatialunits_permissions.permission_id = permissions.permissionid AND permissions.permissionlevel = 0;
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-408">
+        <sql dbms="postgresql">
+            DELETE FROM permissions WHERE permissionlevel = '1';
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-409">
+        <sql dbms="postgresql">
+            UPDATE permissions SET permissionlevel = '1' WHERE permissionlevel = '2';
+        </sql>
+    </changeSet>
+    <changeSet  author="kommonitor"  id="kommonitor-4.0.x-5.0.0-410">
         <sql dbms="postgresql">
             UPDATE permissions SET permissionlevel = '2' WHERE permissionlevel = '3';
         </sql>
