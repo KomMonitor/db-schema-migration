@@ -551,7 +551,7 @@
             <column header="interpretation" name="interpretation" type="STRING"/>
             <column header="isheadlineindicator" name="isheadlineindicator" type="BOOLEAN"/>
             <column header="lowestspatialunitforcomputation" name="lowestspatialunitforcomputation" type="STRING"/>
-            <column header="processdescription" name="processdescription" type="STRING"/>
+            <column header="processdescription" name="processdescription" type="skip"/>
             <column header="referencedatenote" name="referencedatenote" type="STRING"/>
             <column header="topicreference" name="topicreference" type="STRING"/>
             <column header="unit" name="unit" type="STRING"/>
